@@ -2,14 +2,28 @@
 const express = require("express");
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
+const mongoose = require("mongoose");
 
 const app = express();
 
 // Callin different routes
 
-const productRoutes = require("./api/routes/product.js");
+const productRoutes = require("./api/routes/products.js");
 
 const orderRouter = require("./api/routes/order.js");
+
+// connecting to database nikhil9599
+
+mongoose.connect(
+   'mongodb+srv://admin:admin@mongopractice.4ujczly.mongodb.net/?retryWrites=true&w=majority'
+) .then(function (db) {
+    console.clear();
+    console.log("db connected");
+    
+  })
+  .catch(function (error) {
+    console.log("setup failed");
+  });
 
 app.use(morgan("dev"));
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -23,9 +37,13 @@ app.use((req, res, next) => {
   );
 
   if (req.method === "OPTIONS") {
-    res.header('Acess-Control-Allow-Methods', 'PUT, PATCH , DELET , POST , GET')
-    return res.status(200).json({})
+    res.header(
+      "Acess-Control-Allow-Methods",
+      "PUT, PATCH , DELET , POST , GET"
+    );
+    return res.status(200).json({});
   }
+  next();
 });
 
 app.use("/products", productRoutes);
